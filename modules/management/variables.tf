@@ -101,6 +101,7 @@ variable "password_hash" {
   type        = string
   description = "(Optional) Admin user's password hash (use 'openssl passwd -6 PASSWORD')"
   default     = ""
+  sensitive   = true
 }
 
 variable "hostname" {
@@ -120,6 +121,7 @@ variable "SICKey" {
   type        = string
   description = "SIC key — mandatory only when deploying a secondary management server"
   default     = ""
+  sensitive   = true
 }
 
 variable "allow_upload_download" {

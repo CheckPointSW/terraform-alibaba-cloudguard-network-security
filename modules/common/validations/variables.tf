@@ -35,10 +35,12 @@ variable "sic_key" {
   type        = string
   description = "(Optional) SIC key to validate — empty string skips validation"
   default     = ""
+  sensitive   = true
 }
 
 variable "token" {
   type        = string
   description = "(Optional) Smart-1 Cloud token to validate — empty string skips validation"
   default     = ""
+  sensitive   = true
 }
