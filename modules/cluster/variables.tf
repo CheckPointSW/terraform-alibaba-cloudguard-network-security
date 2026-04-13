@@ -130,12 +130,14 @@ variable "admin_shell" {
 variable "gateway_SICKey" {
   type        = string
   description = "Secure Internal Communication key (at least 8 alphanumeric characters)"
+  sensitive   = true
 }
 
 variable "gateway_password_hash" {
   type        = string
   description = "(Optional) Admin user's password hash (use 'openssl passwd -6 PASSWORD')"
   default     = ""
+  sensitive   = true
 }
 
 // ─── Smart-1 Cloud ────────────────────────────────────────────────────────────
@@ -143,12 +145,14 @@ variable "memberAToken" {
   type        = string
   description = "Smart-1 Cloud token for Member A (see SK180501). Must differ from memberBToken."
   default     = ""
+  sensitive   = true
 }
 
 variable "memberBToken" {
   type        = string
   description = "Smart-1 Cloud token for Member B (see SK180501). Must differ from memberAToken."
   default     = ""
+  sensitive   = true
 }
 
 // ─── Advanced Settings ────────────────────────────────────────────────────────
