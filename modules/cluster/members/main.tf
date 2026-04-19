@@ -1,3 +1,33 @@
+// --- Management ENIs (eth1) ---
+resource "alicloud_network_interface" "member_a_mgmt_eni" {
+  network_interface_name = format("%s-Member-A-management-eni", local.eni_name_prefix)
+  vswitch_id             = var.mgmt_vswitch_id
+  security_group_ids     = [var.permissive_sg_id]
+  description            = "eth1"
+}
+
+resource "alicloud_network_interface" "member_b_mgmt_eni" {
+  network_interface_name = format("%s-Member-B-management-eni", local.eni_name_prefix)
+  vswitch_id             = var.mgmt_vswitch_id
+  security_group_ids     = [var.permissive_sg_id]
+  description            = "eth1"
+}
+
+// --- Internal ENIs (eth2) ---
+resource "alicloud_network_interface" "member_a_internal_eni" {
+  network_interface_name = format("%s-Member-A-internal-eni", local.eni_name_prefix)
+  vswitch_id             = var.private_vswitch_id
+  security_group_ids     = [var.permissive_sg_id]
+  description            = "eth2"
+}
+
+resource "alicloud_network_interface" "member_b_internal_eni" {
+  network_interface_name = format("%s-Member-B-internal-eni", local.eni_name_prefix)
+  vswitch_id             = var.private_vswitch_id
+  security_group_ids     = [var.permissive_sg_id]
+  description            = "eth2"
+}
+
 // --- Member A Instance ---
 resource "alicloud_instance" "member_a" {
   instance_name        = format("%s-Member-A", var.gateway_name)
@@ -8,6 +38,13 @@ resource "alicloud_instance" "member_a" {
   security_groups      = [var.permissive_sg_id]
   system_disk_size     = var.volume_size
   system_disk_category = var.disk_category
+
+  network_interfaces {
+    network_interface_id = alicloud_network_interface.member_a_mgmt_eni.id
+  }
+  network_interfaces {
+    network_interface_id = alicloud_network_interface.member_a_internal_eni.id
+  }
 
   tags = merge({
     Name = format("%s-Member-A", var.gateway_name)
@@ -40,6 +77,13 @@ resource "alicloud_instance" "member_b" {
   system_disk_size     = var.volume_size
   system_disk_category = var.disk_category
 
+  network_interfaces {
+    network_interface_id = alicloud_network_interface.member_b_mgmt_eni.id
+  }
+  network_interfaces {
+    network_interface_id = alicloud_network_interface.member_b_internal_eni.id
+  }
+
   tags = merge({
     Name = format("%s-Member-B", var.gateway_name)
   }, var.instance_tags)
@@ -58,56 +102,4 @@ resource "alicloud_instance" "member_b" {
     OsVersion              = local.version_split
     TemplateVersion        = "1.0"
   })
-}
-
-// --- Management ENIs (eth2) ---
-resource "alicloud_network_interface" "member_a_mgmt_eni" {
-  network_interface_name = format("%s-Member-A-management-eni", local.eni_name_prefix)
-  vswitch_id             = var.mgmt_vswitch_id
-  security_group_ids     = [var.permissive_sg_id]
-  description            = "eth2"
-}
-
-resource "alicloud_network_interface_attachment" "member_a_mgmt_eni_attachment" {
-  instance_id          = alicloud_instance.member_a.id
-  network_interface_id = alicloud_network_interface.member_a_mgmt_eni.id
-}
-
-resource "alicloud_network_interface" "member_b_mgmt_eni" {
-  network_interface_name = format("%s-Member-B-management-eni", local.eni_name_prefix)
-  vswitch_id             = var.mgmt_vswitch_id
-  security_group_ids     = [var.permissive_sg_id]
-  description            = "eth2"
-}
-
-resource "alicloud_network_interface_attachment" "member_b_mgmt_eni_attachment" {
-  instance_id          = alicloud_instance.member_b.id
-  network_interface_id = alicloud_network_interface.member_b_mgmt_eni.id
-}
-
-// --- Internal ENIs (eth1) ---
-resource "alicloud_network_interface" "member_a_internal_eni" {
-  depends_on             = [alicloud_network_interface_attachment.member_a_mgmt_eni_attachment]
-  network_interface_name = format("%s-Member-A-internal-eni", local.eni_name_prefix)
-  vswitch_id             = var.private_vswitch_id
-  security_group_ids     = [var.permissive_sg_id]
-  description            = "eth1"
-}
-
-resource "alicloud_network_interface_attachment" "member_a_internal_eni_attachment" {
-  instance_id          = alicloud_instance.member_a.id
-  network_interface_id = alicloud_network_interface.member_a_internal_eni.id
-}
-
-resource "alicloud_network_interface" "member_b_internal_eni" {
-  depends_on             = [alicloud_network_interface_attachment.member_b_mgmt_eni_attachment, alicloud_network_interface_attachment.member_a_internal_eni_attachment]
-  network_interface_name = format("%s-Member-B-internal-eni", local.eni_name_prefix)
-  vswitch_id             = var.private_vswitch_id
-  security_group_ids     = [var.permissive_sg_id]
-  description            = "eth1"
-}
-
-resource "alicloud_network_interface_attachment" "member_b_internal_eni_attachment" {
-  instance_id          = alicloud_instance.member_b.id
-  network_interface_id = alicloud_network_interface.member_b_internal_eni.id
 }
