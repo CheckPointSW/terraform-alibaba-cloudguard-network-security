@@ -1,3 +1,11 @@
+// --- Internal ENI (eth1) ---
+resource "alicloud_network_interface" "internal_eni" {
+  network_interface_name = format("%s-internal-eni", var.eni_name_prefix)
+  vswitch_id             = var.private_vswitch_id
+  security_group_ids     = var.security_groups
+  description            = "eth1"
+}
+
 resource "alicloud_instance" "gateway_instance" {
   instance_name        = var.gateway_name
   instance_type        = var.gateway_instance_type
@@ -7,6 +15,10 @@ resource "alicloud_instance" "gateway_instance" {
   security_groups      = var.security_groups
   system_disk_size     = var.volume_size
   system_disk_category = var.disk_category
+
+  network_interfaces {
+    network_interface_id = alicloud_network_interface.internal_eni.id
+  }
 
   tags = merge({
     Name = var.gateway_name
@@ -25,17 +37,4 @@ resource "alicloud_instance" "gateway_instance" {
     OsVersion              = local.version_split
     TemplateVersion        = "1.0"
   })
-}
-
-// --- Internal ENI (eth1) ---
-resource "alicloud_network_interface" "internal_eni" {
-  network_interface_name = format("%s-internal-eni", var.eni_name_prefix)
-  vswitch_id             = var.private_vswitch_id
-  security_group_ids     = var.security_groups
-  description            = "eth1"
-}
-
-resource "alicloud_network_interface_attachment" "internal_eni_attachment" {
-  instance_id          = alicloud_instance.gateway_instance.id
-  network_interface_id = alicloud_network_interface.internal_eni.id
 }
