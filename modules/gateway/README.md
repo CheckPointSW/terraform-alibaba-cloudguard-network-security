@@ -33,7 +33,7 @@ module "cloudguard_gateway" {
   gateway_instance_type      = "ecs.g5ne.xlarge"
   key_name                   = "my-key-pair"
   allocate_and_associate_eip = true
-  volume_size                = 100
+  volume_size                = 200
   disk_category              = "cloud_efficiency"
   ram_role_name              = ""
 
@@ -116,7 +116,7 @@ allocate_and_associate_eip = true
 | gateway_instance_type | ECS instance type for the Security Gateway | string | ecs.g5ne.large, ecs.g5ne.xlarge, ecs.g5ne.2xlarge, ecs.g5ne.4xlarge, ecs.g5ne.8xlarge, ecs.g7ne.large, ecs.g7ne.xlarge, ecs.g7ne.2xlarge, ecs.g7ne.4xlarge, ecs.g7ne.8xlarge | `"ecs.g5ne.xlarge"` | no |
 | key_name | Name of the ECS Key Pair for SSH access | string | n/a | n/a | yes |
 | allocate_and_associate_eip | When `true`, an Elastic IP is allocated and associated with the gateway | bool | true / false | `true` | no |
-| volume_size | Root volume size in GB (minimum 100) | number | >= 100 | `100` | no |
+| volume_size | Root volume size in GB (minimum 100) | number | >= 100 | `200` | no |
 | disk_category | ECS disk category | string | cloud, cloud_efficiency, cloud_ssd, cloud_essd | `"cloud_efficiency"` | no |
 | ram_role_name | Predefined RAM role name to attach to the gateway instance | string | n/a | `""` | no |
 | instance_tags | Map of tags to apply to the gateway ECS instance | map(string) | n/a | `{}` | no |

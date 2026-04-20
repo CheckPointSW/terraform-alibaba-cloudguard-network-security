@@ -16,7 +16,7 @@ variable "version_license" {
 variable "volume_size" {
   type        = number
   description = "Root volume size in GB — must be at least 100"
-  default     = 100
+  default     = 200
 }
 
 variable "admin_shell" {

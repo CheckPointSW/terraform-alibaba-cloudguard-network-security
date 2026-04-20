@@ -12,7 +12,7 @@ variable "vswitch_id" {
 variable "volume_size" {
   type        = number
   description = "Root volume size (GB)"
-  default     = 100
+  default     = 200
 }
 
 variable "disk_category" {

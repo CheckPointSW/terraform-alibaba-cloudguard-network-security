@@ -31,7 +31,7 @@ module "cloudguard_management" {
   instance_type              = "ecs.g6e.xlarge"
   key_name                   = "my-key-pair"
   allocate_and_associate_eip = true
-  volume_size                = 100
+  volume_size                = 200
   disk_category              = "cloud_essd"
   ram_role_name              = ""
 
@@ -108,7 +108,7 @@ The `gateway_management` variable controls how the Management Server reaches the
 | instance_type | ECS instance type for the Management Server | string | ecs.g6e.large, ecs.g6e.xlarge, ecs.g6e.2xlarge, ecs.g6e.4xlarge, ecs.g6e.8xlarge | `"ecs.g6e.xlarge"` | no |
 | key_name | Name of the ECS Key Pair for SSH access | string | n/a | n/a | yes |
 | allocate_and_associate_eip | When `true`, an Elastic IP is allocated and associated with the Management Server | bool | true / false | `true` | no |
-| volume_size | Root volume size in GB (minimum 100) | number | >= 100 | `100` | no |
+| volume_size | Root volume size in GB (minimum 100) | number | >= 100 | `200` | no |
 | disk_category | ECS disk category | string | cloud, cloud_efficiency, cloud_ssd, cloud_essd | `"cloud_essd"` | no |
 | ram_role_name | Predefined RAM role name to attach to the Management Server instance | string | n/a | `""` | no |
 | instance_tags | Map of tags to apply to the Management Server ECS instance | map(string) | n/a | `{}` | no |
