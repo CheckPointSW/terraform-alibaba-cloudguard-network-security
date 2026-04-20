@@ -81,7 +81,7 @@ variable "allocate_and_associate_eip" {
 variable "volume_size" {
   type        = number
   description = "Root volume size (GB) — minimum 100"
-  default     = 100
+  default     = 200
 }
 
 variable "disk_category" {
