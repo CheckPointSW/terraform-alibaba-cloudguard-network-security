@@ -17,7 +17,7 @@ variable "instance_name" {
 variable "instance_type" {
   type        = string
   description = "Instance type for the management server"
-  default     = "ecs.g6e.xlarge"
+  default     = "ecs.g7.xlarge"
 }
 
 variable "key_name" {
