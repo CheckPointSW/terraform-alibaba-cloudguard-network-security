@@ -67,7 +67,7 @@ variable "resources_tag_name" {
 variable "gateway_version" {
   type        = string
   description = "Gateway version and license (used for OsVersion in userdata)"
-  default     = "R81.20-BYOL"
+  default     = "R82-BYOL"
 }
 
 variable "admin_shell" {
