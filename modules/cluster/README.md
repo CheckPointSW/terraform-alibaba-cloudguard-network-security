@@ -41,7 +41,7 @@ module "cloudguard_cluster" {
   ram_role_name              = ""
 
   # --- Check Point Settings ---
-  gateway_version       = "R81.20-BYOL"
+  gateway_version       = "R82-BYOL"
   admin_shell           = "/etc/cli.sh"
   gateway_SICKey        = "myS1cKey123"
   gateway_password_hash = ""
@@ -143,7 +143,7 @@ management_ip_address = "1.2.3.4"
 | disk_category | ECS disk category | string | cloud, cloud_efficiency, cloud_ssd, cloud_essd | `"cloud_efficiency"` | no |
 | ram_role_name | Predefined RAM role name. If empty, a new role is created automatically | string | n/a | `""` | no |
 | instance_tags | Map of tags to apply to the cluster member ECS instances | map(string) | n/a | `{}` | no |
-| gateway_version | Gateway version and license | string | R81-BYOL, R81.10-BYOL, R81.20-BYOL | `"R81.20-BYOL"` | no |
+| gateway_version | Gateway version and license | string | R81.10-BYOL, R81.20-BYOL, R82-BYOL, R82.10-BYOL | `"R82-BYOL"` | no |
 | admin_shell | Admin shell for advanced CLI configuration | string | /etc/cli.sh, /bin/bash, /bin/csh, /bin/tcsh | `"/etc/cli.sh"` | no |
 | gateway_SICKey | Secure Internal Communication (SIC) key. Minimum 8 alphanumeric characters | string | n/a | n/a | yes |
 | gateway_password_hash | Admin user password hash. Generate with: `openssl passwd -6 PASSWORD` | string | n/a | `""` | no |

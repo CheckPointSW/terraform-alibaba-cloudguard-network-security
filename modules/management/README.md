@@ -36,7 +36,7 @@ module "cloudguard_management" {
   ram_role_name              = ""
 
   # --- Check Point Settings ---
-  version_license       = "R81.20-BYOL"
+  version_license       = "R82-BYOL"
   admin_shell           = "/etc/cli.sh"
   password_hash         = ""
   hostname              = ""
@@ -112,7 +112,7 @@ The `gateway_management` variable controls how the Management Server reaches the
 | disk_category | ECS disk category | string | cloud, cloud_efficiency, cloud_ssd, cloud_essd | `"cloud_essd"` | no |
 | ram_role_name | Predefined RAM role name to attach to the Management Server instance | string | n/a | `""` | no |
 | instance_tags | Map of tags to apply to the Management Server ECS instance | map(string) | n/a | `{}` | no |
-| version_license | Management Server version and license | string | R81-BYOL, R81.10-BYOL, R81.20-BYOL | `"R81.20-BYOL"` | no |
+| version_license | Management Server version and license | string | R81.10-BYOL, R81.20-BYOL, R82-BYOL, R82.10-BYOL | `"R82-BYOL"` | no |
 | admin_shell | Admin shell for advanced CLI configuration | string | /etc/cli.sh, /bin/bash, /bin/csh, /bin/tcsh | `"/etc/cli.sh"` | no |
 | password_hash | Admin user password hash. Generate with: `openssl passwd -6 PASSWORD` | string | n/a | `""` | no |
 | hostname | Optional hostname for the Management Server | string | n/a | `""` | no |

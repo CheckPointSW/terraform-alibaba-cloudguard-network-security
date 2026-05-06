@@ -51,7 +51,7 @@ variable "image_id" {
 variable "version_license" {
   type        = string
   description = "Version and license (used for OsVersion in userdata)"
-  default     = "R81.20-BYOL"
+  default     = "R82-BYOL"
 }
 
 variable "admin_shell" {

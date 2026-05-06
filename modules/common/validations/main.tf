@@ -35,16 +35,16 @@ locals {
 // --- Version/license validation ---
 locals {
   gw_versions = [
-    "R81-BYOL",
     "R81.10-BYOL",
     "R81.20-BYOL",
-    "R82-BYOL"
+    "R82-BYOL",
+    "R82.10-BYOL"
   ]
   mgmt_versions = [
-    "R81-BYOL",
     "R81.10-BYOL",
     "R81.20-BYOL",
-    "R82-BYOL"
+    "R82-BYOL",
+    "R82.10-BYOL"
   ]
   allowed_versions = coalescelist(
     var.chkp_type == "gateway" ? local.gw_versions : [],
