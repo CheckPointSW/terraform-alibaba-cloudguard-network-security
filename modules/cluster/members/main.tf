@@ -42,9 +42,6 @@ resource "alicloud_instance" "member_a" {
   network_interfaces {
     network_interface_id = alicloud_network_interface.member_a_mgmt_eni.id
   }
-  network_interfaces {
-    network_interface_id = alicloud_network_interface.member_a_internal_eni.id
-  }
 
   tags = merge({
     Name = format("%s-Member-A", var.gateway_name)
@@ -80,9 +77,6 @@ resource "alicloud_instance" "member_b" {
   network_interfaces {
     network_interface_id = alicloud_network_interface.member_b_mgmt_eni.id
   }
-  network_interfaces {
-    network_interface_id = alicloud_network_interface.member_b_internal_eni.id
-  }
 
   tags = merge({
     Name = format("%s-Member-B", var.gateway_name)
@@ -102,4 +96,15 @@ resource "alicloud_instance" "member_b" {
     OsVersion              = local.version_split
     TemplateVersion        = "1.0"
   })
+}
+
+// --- Internal ENI attachments (eth2, hot-plugged after boot for deterministic ordering) ---
+resource "alicloud_network_interface_attachment" "member_a_internal" {
+  instance_id          = alicloud_instance.member_a.id
+  network_interface_id = alicloud_network_interface.member_a_internal_eni.id
+}
+
+resource "alicloud_network_interface_attachment" "member_b_internal" {
+  instance_id          = alicloud_instance.member_b.id
+  network_interface_id = alicloud_network_interface.member_b_internal_eni.id
 }
