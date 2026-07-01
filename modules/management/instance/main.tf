@@ -83,18 +83,6 @@ resource "alicloud_security_group_rule" "management_ingress_18264" {
   cidr_ip           = var.gateway_addresses
 }
 
-// Gateway-facing ICMP
-resource "alicloud_security_group_rule" "management_ingress_gw_icmp" {
-  type              = "ingress"
-  ip_protocol       = "icmp"
-  nic_type          = "intranet"
-  policy            = "accept"
-  port_range        = "-1/-1"
-  priority          = 1
-  security_group_id = alicloud_security_group.management_sg.id
-  cidr_ip           = var.gateway_addresses
-}
-
 // Admin-facing rules (TCP)
 resource "alicloud_security_group_rule" "management_ingress_22" {
   type              = "ingress"
@@ -136,18 +124,6 @@ resource "alicloud_security_group_rule" "management_ingress_19009" {
   policy            = "accept"
   port_range        = "19009/19009"
   priority          = 1
-  security_group_id = alicloud_security_group.management_sg.id
-  cidr_ip           = var.admin_cidr
-}
-
-// Admin-facing ICMP
-resource "alicloud_security_group_rule" "management_ingress_admin_icmp" {
-  type              = "ingress"
-  ip_protocol       = "icmp"
-  nic_type          = "intranet"
-  policy            = "accept"
-  port_range        = "-1/-1"
-  priority          = 2
   security_group_id = alicloud_security_group.management_sg.id
   cidr_ip           = var.admin_cidr
 }

@@ -18,11 +18,6 @@ output "management_public_ip" {
   value       = module.elastic_ip.instance_eip_public_ip
 }
 
-output "image_id" {
-  description = "The image ID used to launch the management server"
-  value       = module.images.image_id
-}
-
 output "vpc_id" {
   description = "The VPC ID (existing or newly created)"
   value       = local.resolved_vpc_id

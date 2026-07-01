@@ -53,11 +53,6 @@ output "permissive_sg_name" {
   value       = module.permissive_sg.permissive_sg_name
 }
 
-output "image_id" {
-  description = "The image ID used to launch the cluster members"
-  value       = module.images.image_id
-}
-
 output "vpc_id" {
   description = "The VPC ID (existing or newly created)"
   value       = local.resolved_vpc_id

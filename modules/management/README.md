@@ -102,7 +102,7 @@ The `gateway_management` variable controls how the Management Server reaches the
 | vswitch_id | Existing vSwitch ID for the Management Server. Required when using an existing VPC | string | n/a | `""` | no |
 | vpc_name | Name for the new VPC. Used only when creating a new VPC | string | n/a | `"cp-vpc"` | no |
 | vpc_cidr | CIDR block for the new VPC | string | n/a | `"10.0.0.0/16"` | no |
-| public_vswitchs_map | Map of `{zone = suffix}` for vSwitches. Required when creating a new VPC | map(string) | n/a | `{}` | no |
+| public_vswitchs_map | Map of `{zone = suffix}` for vSwitches. Required when creating a new VPC; the default `{}` is only valid when `vpc_id` is set (existing-VPC mode) | map(string) | n/a | `{}` | no |
 | vswitchs_bit_length | Bits to extend vpc_cidr per subnet (e.g. `/16` + `8` = `/24`) | number | n/a | `8` | no |
 | instance_name | ECS instance name for the Management Server | string | n/a | `"CP-Management-tf"` | no |
 | instance_type | ECS instance type for the Management Server | string | ecs.g6e.large, ecs.g6e.xlarge, ecs.g6e.2xlarge, ecs.g6e.4xlarge, ecs.g6e.8xlarge, ecs.g7.large, ecs.g7.xlarge, ecs.g7.2xlarge, ecs.g7.4xlarge, ecs.g7.8xlarge | `"ecs.g7.xlarge"` | no |
@@ -115,20 +115,30 @@ The `gateway_management` variable controls how the Management Server reaches the
 | version_license | Management Server version and license | string | R81.10-BYOL, R81.20-BYOL, R82-BYOL, R82.10-BYOL | `"R82-BYOL"` | no |
 | admin_shell | Admin shell for advanced CLI configuration | string | /etc/cli.sh, /bin/bash, /bin/csh, /bin/tcsh | `"/etc/cli.sh"` | no |
 | password_hash | Admin user password hash. Generate with: `openssl passwd -6 PASSWORD` | string | n/a | `""` | no |
-| hostname | Optional hostname for the Management Server | string | n/a | `""` | no |
+| hostname | Optional hostname for the Management Server | string | RFC1123 label (1–63 chars) or empty | `""` | no |
 | is_primary_management | Set to `true` for a Primary Management Server, `false` for a Secondary | bool | true / false | `true` | no |
-| SICKey | SIC key — required only when deploying a Secondary Management Server. Minimum 8 alphanumeric characters | string | n/a | `""` | no |
+| SICKey | SIC key — required only when deploying a Secondary Management Server | string | ≥ 8 alphanumeric chars (or empty when primary) | `""` | no |
 | allow_upload_download | Allow automatic download of Blade Contracts and telemetry data to Check Point | bool | true / false | `true` | no |
 | gateway_management | How the Management Server connects to gateways | string | Locally managed, Over the internet | `"Locally managed"` | no |
 | admin_cidr | CIDR block that is allowed to access the Management Server via web UI, SSH, and SmartConsole | string | valid CIDR | n/a | yes |
 | gateway_addresses | CIDR block from which gateways are allowed to communicate with the Management Server | string | valid CIDR | n/a | yes |
-| primary_ntp | IPv4 address of the primary NTP server | string | n/a | `"ntp.cloud.aliyuncs.com"` | no |
-| secondary_ntp | IPv4 address of the secondary NTP server | string | n/a | `"ntp7.cloud.aliyuncs.com"` | no |
+| primary_ntp | Primary NTP server — hostname **or** IPv4 address | string | hostname or IPv4 | `"ntp.cloud.aliyuncs.com"` | no |
+| secondary_ntp | Secondary NTP server — hostname **or** IPv4 address | string | hostname or IPv4 | `"ntp7.cloud.aliyuncs.com"` | no |
 | bootstrap_script | Optional semicolon-separated commands to run on first boot | string | n/a | `""` | no |
 
 ## Outputs
 
 ### Adding Outputs to Your Configuration
+
+Expose every output the module emits in a single block:
+
+```hcl
+output "cloudguard_management" {
+  value = module.cloudguard_management
+}
+```
+
+Or expose a single output:
 
 ```hcl
 output "management_public_ip" {
@@ -140,9 +150,8 @@ output "management_public_ip" {
 
 | Name | Description |
 |------|-------------|
-| image_id | The image ID used for the deployed Management Server |
+| Deployment | Deployment notice — final configuration may take up to 20 minutes after deployment finishes |
 | management_instance_id | The Management Server ECS instance ID |
 | management_instance_name | The Management Server ECS instance name |
-| management_instance_tags | The tags applied to the Management Server ECS instance |
-| management_public_ip | The public Elastic IP address of the Management Server (empty if EIP not allocated) |
+| management_public_ip | The Elastic IP address of the Management Server (empty if EIP not allocated) |
 | vpc_id | The VPC ID (existing or newly created) |

@@ -145,13 +145,13 @@ management_ip_address = "1.2.3.4"
 | instance_tags | Map of tags to apply to the cluster member ECS instances | map(string) | n/a | `{}` | no |
 | gateway_version | Gateway version and license | string | R81.10-BYOL, R81.20-BYOL, R82-BYOL, R82.10-BYOL | `"R82-BYOL"` | no |
 | admin_shell | Admin shell for advanced CLI configuration | string | /etc/cli.sh, /bin/bash, /bin/csh, /bin/tcsh | `"/etc/cli.sh"` | no |
-| gateway_SICKey | Secure Internal Communication (SIC) key. Minimum 8 alphanumeric characters | string | n/a | n/a | yes |
+| gateway_SICKey | Secure Internal Communication (SIC) key | string | ≥ 8 alphanumeric chars | n/a | yes |
 | gateway_password_hash | Admin user password hash. Generate with: `openssl passwd -6 PASSWORD` | string | n/a | `""` | no |
 | memberAToken | Smart-1 Cloud token for Member A (SK180501). Must differ from memberBToken | string | n/a | `""` | no |
 | memberBToken | Smart-1 Cloud token for Member B (SK180501). Must differ from memberAToken | string | n/a | `""` | no |
 | management_ip_address | Public or private IP of the Security Management Server. If provided, a static route to this IP via eth1 is added automatically | string | n/a | `""` | no |
 | resources_tag_name | Optional prefix applied to resource name tags | string | n/a | `""` | no |
-| gateway_hostname | Optional base hostname — appended with `-member-a` and `-member-b` for each member | string | n/a | `""` | no |
+| gateway_hostname | Optional base hostname — appended with `-member-a` and `-member-b` for each member | string | RFC1123 label (1–63 chars) or empty | `""` | no |
 | allow_upload_download | Allow automatic download of Blade Contracts and telemetry data to Check Point | bool | true / false | `true` | no |
 | gateway_bootstrap_script | Optional semicolon-separated commands to run on first boot | string | n/a | `""` | no |
 | primary_ntp | IPv4 address of the primary NTP server | string | n/a | `"ntp.cloud.aliyuncs.com"` | no |
@@ -160,6 +160,16 @@ management_ip_address = "1.2.3.4"
 ## Outputs
 
 ### Adding Outputs to Your Configuration
+
+Expose every output the module emits in a single block:
+
+```hcl
+output "cloudguard_cluster" {
+  value = module.cloudguard_cluster
+}
+```
+
+Or expose a single output:
 
 ```hcl
 output "cluster_vip" {
@@ -182,5 +192,4 @@ output "cluster_vip" {
 | member_a_internal_eni_id | Internal ENI ID of Member A |
 | permissive_sg_id | The permissive security group ID |
 | permissive_sg_name | The permissive security group name |
-| image_id | The image ID used for the deployed cluster members |
 | vpc_id | The VPC ID (existing or newly created) |
