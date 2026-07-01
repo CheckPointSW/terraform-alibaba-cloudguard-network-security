@@ -109,7 +109,7 @@ allocate_and_associate_eip = true
 | private_route_table | Route table ID in which to create the internal default route. Leave empty to skip | string | n/a | `""` | no |
 | vpc_name | Name for the new VPC. Used only when creating a new VPC | string | n/a | `"cp-vpc"` | no |
 | vpc_cidr | CIDR block for the new VPC | string | n/a | `"10.0.0.0/16"` | no |
-| public_vswitchs_map | Map of `{zone = suffix}` for public vSwitches. Required when creating a new VPC | map(string) | n/a | `{}` | no |
+| public_vswitchs_map | Map of `{zone = suffix}` for public vSwitches. Required when creating a new VPC; the default `{}` is only valid when `vpc_id` is set (existing-VPC mode) | map(string) | n/a | `{}` | no |
 | private_vswitchs_map | Map of `{zone = suffix}` for private vSwitches. Required when creating a new VPC | map(string) | n/a | `{}` | no |
 | vswitchs_bit_length | Bits to extend vpc_cidr per subnet (e.g. `/16` + `8` = `/24`) | number | n/a | `8` | no |
 | gateway_name | Name tag for the Security Gateway ECS instance | string | n/a | `"Check-Point-Gateway-tf"` | no |
@@ -122,11 +122,11 @@ allocate_and_associate_eip = true
 | instance_tags | Map of tags to apply to the gateway ECS instance | map(string) | n/a | `{}` | no |
 | gateway_version | Gateway version and license | string | R81.10-BYOL, R81.20-BYOL, R82-BYOL, R82.10-BYOL | `"R82-BYOL"` | no |
 | admin_shell | Admin shell for advanced CLI configuration | string | /etc/cli.sh, /bin/bash, /bin/csh, /bin/tcsh | `"/etc/cli.sh"` | no |
-| gateway_SICKey | Secure Internal Communication (SIC) key. Minimum 8 alphanumeric characters | string | n/a | n/a | yes |
+| gateway_SICKey | Secure Internal Communication (SIC) key | string | ≥ 8 alphanumeric chars | n/a | yes |
 | gateway_password_hash | Admin user password hash. Generate with: `openssl passwd -6 PASSWORD` | string | n/a | `""` | no |
 | gateway_TokenKey | Smart-1 Cloud token for quick connect (SK180501) | string | n/a | `""` | no |
 | resources_tag_name | Optional prefix applied to resource name tags | string | n/a | `""` | no |
-| gateway_hostname | Optional hostname for the gateway | string | n/a | `""` | no |
+| gateway_hostname | Optional hostname for the gateway | string | RFC1123 label (1–63 chars) or empty | `""` | no |
 | allow_upload_download | Allow automatic download of Blade Contracts and telemetry data to Check Point | bool | true / false | `true` | no |
 | gateway_bootstrap_script | Optional semicolon-separated commands to run on first boot | string | n/a | `""` | no |
 | primary_ntp | IPv4 address of the primary NTP server | string | n/a | `"ntp.cloud.aliyuncs.com"` | no |
@@ -135,6 +135,16 @@ allocate_and_associate_eip = true
 ## Outputs
 
 ### Adding Outputs to Your Configuration
+
+Expose every output the module emits in a single block:
+
+```hcl
+output "cloudguard_gateway" {
+  value = module.cloudguard_gateway
+}
+```
+
+Or expose a single output:
 
 ```hcl
 output "gateway_public_ip" {
@@ -146,12 +156,9 @@ output "gateway_public_ip" {
 
 | Name | Description |
 |------|-------------|
-| image_id | The image ID used for the deployed Security Gateway |
-| permissive_sg_id | The permissive security group ID |
-| permissive_sg_name | The permissive security group name |
-| gateway_eip_id | The Elastic IP allocation ID |
-| gateway_eip_public_ip | The public Elastic IP address |
 | gateway_instance_id | The Security Gateway ECS instance ID |
 | gateway_instance_name | The Security Gateway ECS instance name |
+| gateway_public_ip | The Elastic IP address associated with the gateway (empty if EIP not allocated) |
 | internal_eni_id | The ID of the gateway's internal (eth1) ENI |
+| permissive_sg_id | The permissive security group ID |
 | vpc_id | The VPC ID (existing or newly created) |

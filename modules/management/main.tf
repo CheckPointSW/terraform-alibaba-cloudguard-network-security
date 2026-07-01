@@ -1,13 +1,20 @@
 // --- Validations ---
 module "validate" {
-  source          = "../common/validations"
-  chkp_type       = "management"
-  instance_type   = var.instance_type
-  version_license = var.version_license
-  volume_size     = var.volume_size
-  admin_shell     = var.admin_shell
-  hostname        = var.hostname
-  sic_key         = var.SICKey
+  source           = "../common/validations"
+  chkp_type        = "management"
+  instance_type    = var.instance_type
+  version_license  = var.version_license
+  volume_size      = var.volume_size
+  admin_shell      = var.admin_shell
+  hostname         = var.hostname
+  sic_key          = var.SICKey
+  password_hash    = var.password_hash
+  vpc_id           = var.vpc_id
+  vpc_name         = var.vpc_name
+  vswitch_id       = var.vswitch_id
+  key_name         = var.key_name
+  ram_role_name    = var.ram_role_name
+  bootstrap_script = var.bootstrap_script
 }
 
 // --- VPC (created only when vpc_id is not provided) ---
