@@ -19,7 +19,8 @@ Terraform module which deploys a Check Point Security Gateway on Alibaba Cloud. 
 
 ```hcl
 module "cloudguard_gateway" {
-  source = "./modules/gateway"
+  source  = "CheckPointSW/cloudguard-network-security/alibaba//modules/gateway"
+  version = "~> 1.0"
 
   # --- VPC Network Configuration (new VPC) ---
   vpc_name             = "cp-vpc"
@@ -70,7 +71,8 @@ The module uses `vpc_id` to decide how to deploy:
 ```hcl
 # Existing VPC example
 module "cloudguard_gateway" {
-  source = "./modules/gateway"
+  source  = "CheckPointSW/cloudguard-network-security/alibaba//modules/gateway"
+  version = "~> 1.0"
 
   vpc_id              = "vpc-xxxxxxxxxxxx"
   public_vswitch_id   = "vsw-xxxxxxxxxxxx"

@@ -18,7 +18,8 @@ Terraform module which deploys a Check Point Management Server on Alibaba Cloud.
 
 ```hcl
 module "cloudguard_management" {
-  source = "./modules/management"
+  source  = "CheckPointSW/cloudguard-network-security/alibaba//modules/management"
+  version = "~> 1.0"
 
   # --- VPC Network Configuration (new VPC) ---
   vpc_name            = "cp-mgmt-vpc"
@@ -72,7 +73,8 @@ The module uses `vpc_id` to decide how to deploy:
 ```hcl
 # Existing VPC example
 module "cloudguard_management" {
-  source = "./modules/management"
+  source  = "CheckPointSW/cloudguard-network-security/alibaba//modules/management"
+  version = "~> 1.0"
 
   vpc_id     = "vpc-xxxxxxxxxxxx"
   vswitch_id = "vsw-xxxxxxxxxxxx"

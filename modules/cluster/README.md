@@ -21,7 +21,8 @@ Terraform module which deploys a Check Point CloudGuard High Availability Cluste
 
 ```hcl
 module "cloudguard_cluster" {
-  source = "./modules/cluster"
+  source  = "CheckPointSW/cloudguard-network-security/alibaba//modules/cluster"
+  version = "~> 1.0"
 
   # --- VPC Network Configuration (new VPC) ---
   vpc_name                = "cp-cluster-vpc"
@@ -75,7 +76,8 @@ The module uses `vpc_id` to decide how to deploy:
 ```hcl
 # Existing VPC example
 module "cloudguard_cluster" {
-  source = "./modules/cluster"
+  source  = "CheckPointSW/cloudguard-network-security/alibaba//modules/cluster"
+  version = "~> 1.0"
 
   vpc_id              = "vpc-xxxxxxxxxxxx"
   cluster_vswitch_id  = "vsw-xxxxxxxxxxxx"
