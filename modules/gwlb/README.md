@@ -254,13 +254,13 @@ Return traffic from the GWLBe out to the internet via the IPv4 gateway.
 | prefix | Name prefix for all resources (e.g. `cp-gwlb` → `cp-gwlb-security-vpc`) | string | — | — | yes |
 | vpc_id | Existing VPC ID. Leave empty to create a new security VPC | string | — | `""` | no |
 | security_vpc_cidr | CIDR block for the new security VPC | string | — | `"10.0.0.0/16"` | no |
-| security_vswitchs_map | Map of `{zone = cidr-suffix}` for new vSwitches. Required when `vpc_id` is empty | map(number) | — | `{}` | no |
+| security_vswitchs_map | Map of `{zone = cidr-suffix}` for new vSwitches. Required when `vpc_id` is empty; the default `{}` is only valid when `vpc_id` is set (existing-VPC mode) | map(number) | — | `{}` | no |
 | security_vswitchs_ids | List of existing vSwitch IDs. Zone is auto-detected. Required when `vpc_id` is set | list(string) | — | `[]` | no |
 | vswitchs_bit_length | Bits to extend `security_vpc_cidr` per vSwitch (e.g. /16 + 8 = /24) | number | — | `8` | no |
 | key_name | SSH key pair name for instance access | string | — | — | yes |
 | gateway_instance_type | ECS instance type (g5ne or g7ne family) | string | `ecs.g5ne.large`, `ecs.g5ne.xlarge`, `ecs.g5ne.2xlarge`, `ecs.g5ne.4xlarge`, `ecs.g5ne.8xlarge`, `ecs.g7ne.large`, `ecs.g7ne.xlarge`, `ecs.g7ne.2xlarge`, `ecs.g7ne.4xlarge`, `ecs.g7ne.8xlarge` | `"ecs.g5ne.xlarge"` | no |
 | gateway_version | Check Point version and license | string | `R81.20-BYOL`, `R82-BYOL`, `R82.10-BYOL` | `"R82-BYOL"` | no |
-| gateway_SICKey | Secure Internal Communication key (min 8 alphanumeric chars) | string | — | — | yes |
+| gateway_SICKey | Secure Internal Communication key | string | ≥ 8 alphanumeric chars | — | yes |
 | gateway_password_hash | Admin password hash. Generate with: `openssl passwd -6 PASSWORD` | string | — | `""` | no |
 | admin_shell | Admin shell | string | `/etc/cli.sh`, `/bin/bash`, `/bin/csh`, `/bin/tcsh` | `"/etc/cli.sh"` | no |
 | gateway_bootstrap_script | Optional semicolon-separated commands to run on first boot | string | — | `""` | no |
@@ -285,6 +285,16 @@ Return traffic from the GWLBe out to the internet via the IPv4 gateway.
 ## Outputs
 
 ### Adding Outputs to Your Configuration
+
+Expose every output the module emits in a single block:
+
+```hcl
+output "cloudguard_gwlb" {
+  value = module.cloudguard_gwlb
+}
+```
+
+Or expose a single output:
 
 ```hcl
 output "endpoint_service_id" {
