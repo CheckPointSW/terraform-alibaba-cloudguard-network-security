@@ -1,11 +1,15 @@
 module "validate" {
-  source          = "../common/validations"
-  chkp_type       = "gateway"
-  instance_type   = var.gateway_instance_type
-  version_license = var.gateway_version
-  volume_size     = var.volume_size
-  admin_shell     = var.admin_shell
-  sic_key         = var.gateway_SICKey
+  source           = "../common/validations"
+  chkp_type        = "gateway"
+  instance_type    = var.gateway_instance_type
+  version_license  = var.gateway_version
+  volume_size      = var.volume_size
+  admin_shell      = var.admin_shell
+  sic_key          = var.gateway_SICKey
+  password_hash    = var.gateway_password_hash
+  vpc_id           = var.vpc_id
+  key_name         = var.key_name
+  bootstrap_script = var.gateway_bootstrap_script
 }
 
 resource "alicloud_vpc" "security_vpc" {
