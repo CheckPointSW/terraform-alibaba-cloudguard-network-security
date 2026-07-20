@@ -84,6 +84,6 @@ variable "ram_role_name" {
 
 variable "bootstrap_script" {
   type        = string
-  description = "(Optional) Bootstrap script to validate — empty allowed, blank/whitespace rejected"
+  description = "(Optional) Bootstrap script to validate — empty allowed, blank (whitespace-only) rejected"
   default     = ""
 }

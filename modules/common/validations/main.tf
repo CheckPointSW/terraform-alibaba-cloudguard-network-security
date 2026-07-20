@@ -142,5 +142,5 @@ resource "null_resource" "invalid_ram_role_name" {
 }
 
 resource "null_resource" "invalid_bootstrap_script" {
-  count = var.bootstrap_script == "" || trimspace(var.bootstrap_script) == var.bootstrap_script ? 0 : "bootstrap_script must not be blank or contain leading/trailing whitespace"
+  count = var.bootstrap_script == "" || trimspace(var.bootstrap_script) != "" ? 0 : "bootstrap_script must not be blank (whitespace only)"
 }
