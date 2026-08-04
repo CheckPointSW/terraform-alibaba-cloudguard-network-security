@@ -14,3 +14,9 @@ variable "gateway_name" {
   description = "(Optional) Fallback name when resources_tag_name is empty"
   default     = "Check-Point-Gateway-tf"
 }
+
+variable "enable_ipv6" {
+  type        = bool
+  description = "Enable IPv6 (dual-stack) security group rules."
+  default     = false
+}

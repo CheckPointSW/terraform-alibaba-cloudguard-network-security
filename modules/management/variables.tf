@@ -164,3 +164,40 @@ variable "bootstrap_script" {
   description = "(Optional) Semicolon-separated commands to run on initial boot"
   default     = ""
 }
+
+// ─── IPv6 / Dual-Stack ──────────────────────────────────────────────────────
+variable "enable_ipv6" {
+  type        = bool
+  description = "Enable IPv6 (dual-stack) for the management deployment."
+  default     = false
+}
+
+variable "ipv6_gateway_id" {
+  type        = string
+  description = "(Optional) Existing IPv6 gateway ID. Required when enable_ipv6 = true, deploying into an existing VPC, AND ipv6_internet_bandwidth > 0. Not required for internal-only IPv6 (bandwidth = 0)."
+  default     = ""
+}
+
+variable "ipv6_internet_bandwidth" {
+  type        = number
+  description = "IPv6 internet bandwidth in Mbps (0-5000). Only used when enable_ipv6 = true. Set to 0 to skip the IPv6 gateway + bandwidth and keep IPv6 VPC-internal only (no public IPv6)."
+  default     = 100
+}
+
+variable "ipv6_internet_charge_type" {
+  type        = string
+  description = "Billing model for the IPv6 internet bandwidth. PayByTraffic = pay per GB transferred; PayByBandwidth = flat fee per reserved Mbps. Only used when enable_ipv6 = true and ipv6_internet_bandwidth > 0."
+  default     = "PayByTraffic"
+}
+
+variable "admin_cidr_ipv6" {
+  type        = string
+  description = "IPv6 CIDR to allow web, SSH, and graphical client access to the management server. Required when enable_ipv6 = true."
+  default     = ""
+}
+
+variable "gateway_addresses_ipv6" {
+  type        = string
+  description = "IPv6 CIDR to allow gateway communication with the management server. Required when enable_ipv6 = true."
+  default     = ""
+}

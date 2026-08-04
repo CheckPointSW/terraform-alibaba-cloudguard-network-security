@@ -100,8 +100,8 @@ resource "null_resource" "invalid_sic_key" {
 
 // --- Smart-1 Cloud token validation (skipped if empty) ---
 locals {
-  split_token      = split(" ", var.token)
-  token_decode     = var.token != "" ? base64decode(element(local.split_token, length(local.split_token) - 1)) : ""
+  split_token       = split(" ", var.token)
+  token_decode      = var.token != "" ? base64decode(element(local.split_token, length(local.split_token) - 1)) : ""
   regex_token_valid = "(^https://(.+).checkpoint.com/app/maas/api/v1/tenant(.+)|^$)"
 }
 
@@ -143,4 +143,54 @@ resource "null_resource" "invalid_ram_role_name" {
 
 resource "null_resource" "invalid_bootstrap_script" {
   count = var.bootstrap_script == "" || trimspace(var.bootstrap_script) != "" ? 0 : "bootstrap_script must not be blank (whitespace only)"
+}
+
+// --- Dual-stack + existing VPC + public IPv6 requires ipv6_gateway_id ---
+// When ipv6_internet_bandwidth = 0 (VPC-internal IPv6 only), the IPv6 gateway is
+// not consumed by anything, so it isn't required.
+locals {
+  needs_existing_ipv6_gateway = var.enable_ipv6 && var.vpc_id != "" && var.ipv6_internet_bandwidth > 0
+  validate_ipv6_gateway_id = regex("^$", (
+    local.needs_existing_ipv6_gateway && var.ipv6_gateway_id == ""
+    ? "ipv6_gateway_id is required when deploying dual-stack into an existing VPC with public IPv6 (ipv6_internet_bandwidth > 0)"
+    : ""
+  ))
+}
+
+// --- IPv6 internet bandwidth validation (skipped if IPv6 is disabled) ---
+// 0 = no public IPv6 (skip IPv6 gateway + bandwidth, instance keeps VPC-internal IPv6 only).
+// Max Mbps is charge-type dependent, per Alibaba AllocateIpv6InternetBandwidth:
+// PayByBandwidth up to 2000, PayByTraffic up to 1000.
+locals {
+  ipv6_bandwidth_max = var.ipv6_internet_charge_type == "PayByBandwidth" ? 2000 : 1000
+  validate_ipv6_bandwidth = var.enable_ipv6 ? regex("^$", (
+    var.ipv6_internet_bandwidth < 0 || var.ipv6_internet_bandwidth > local.ipv6_bandwidth_max
+    ? "ipv6_internet_bandwidth must be between 0 and ${local.ipv6_bandwidth_max} Mbps for ipv6_internet_charge_type '${var.ipv6_internet_charge_type}' (0 = no public IPv6)"
+    : ""
+  )) : ""
+}
+
+// --- Management dual-stack admin/gateway IPv6 CIDR validation ---
+// Required when enable_ipv6 = true on the management module; format-checked when non-empty.
+locals {
+  // Permissive IPv6 CIDR regex — accepts standard hex IPv6 with optional :: compression and /0-128 prefix.
+  regex_valid_ipv6_cidr = "^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}(:[0-9a-fA-F]{1,4}){1,1}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:))(/(12[0-8]|1[01][0-9]|[1-9]?[0-9]))$"
+  mgmt_dual_stack       = var.enable_ipv6 && var.chkp_type == "management"
+
+  validate_admin_cidr_ipv6_required = regex("^$", (
+    local.mgmt_dual_stack && var.admin_cidr_ipv6 == ""
+    ? "admin_cidr_ipv6 is required when enable_ipv6 = true on the management module"
+    : ""
+  ))
+  validate_gateway_addresses_ipv6_required = regex("^$", (
+    local.mgmt_dual_stack && var.gateway_addresses_ipv6 == ""
+    ? "gateway_addresses_ipv6 is required when enable_ipv6 = true on the management module"
+    : ""
+  ))
+  validate_admin_cidr_ipv6_format = var.admin_cidr_ipv6 != "" ? (
+    regex(local.regex_valid_ipv6_cidr, var.admin_cidr_ipv6) == var.admin_cidr_ipv6 ? 0 : "admin_cidr_ipv6 must be a valid IPv6 CIDR (e.g. 2001:db8::/64)"
+  ) : 0
+  validate_gateway_addresses_ipv6_format = var.gateway_addresses_ipv6 != "" ? (
+    regex(local.regex_valid_ipv6_cidr, var.gateway_addresses_ipv6) == var.gateway_addresses_ipv6 ? 0 : "gateway_addresses_ipv6 must be a valid IPv6 CIDR (e.g. 2001:db8::/64)"
+  ) : 0
 }

@@ -7,3 +7,9 @@ variable "internal_eni_id" {
   type        = string
   description = "The internal ENI of the security gateway (used as the next hop)"
 }
+
+variable "enable_ipv6" {
+  type        = bool
+  description = "Enable IPv6 (dual-stack) default route (::/0)."
+  default     = false
+}

@@ -96,6 +96,44 @@ The `gateway_management` variable controls how the Management Server reaches the
 - **`"Over the internet"`** — use this when gateways are deployed in a different network or region and are not reachable via private IP. The Management Server will use the gateways' public IPs for SIC and policy installation. This is the recommended setting for most cloud deployments.
 - **`"Locally managed"`** — use this only when all gateways are reachable via private IP within the same VPC or a directly connected network.
 
+## IPv6 / Dual-Stack
+
+Set `enable_ipv6 = true` to deploy the Management Server with dual-stack (IPv4 + IPv6).
+
+When `enable_ipv6 = true`, you must also set `admin_cidr_ipv6` (IPv6 CIDR for admin access — web UI, SSH, SmartConsole) and `gateway_addresses_ipv6` (IPv6 CIDR for gateway communication — SIC, log push, policy).
+
+- **New VPC** — the module enables IPv6 on the VPC and vSwitch, and creates the IPv6 Gateway automatically.
+- **Existing VPC** — the VPC and vSwitch must already have IPv6 enabled. If you want public IPv6 (`ipv6_internet_bandwidth > 0`), you must also pass `ipv6_gateway_id` of an existing IPv6 Gateway on that VPC. For internal-only IPv6 (`bandwidth = 0`), `ipv6_gateway_id` is not required.
+- **No public IPv6** — set `ipv6_internet_bandwidth = 0` to skip the IPv6 internet bandwidth allocation. The Management Server still gets an IPv6 address from the vSwitch, but is reachable only within the VPC.
+
+**New VPC + public IPv6** (default):
+
+```hcl
+enable_ipv6             = true
+ipv6_internet_bandwidth = 100
+admin_cidr_ipv6         = "2001:db8::/32" # restrict to your admin IPv6 range
+gateway_addresses_ipv6  = "::/0"
+```
+
+**Existing VPC + public IPv6** (supply your existing IPv6 Gateway):
+
+```hcl
+enable_ipv6             = true
+ipv6_internet_bandwidth = 100
+ipv6_gateway_id         = "ipv6gw-xxxxxxxxxxxx"
+admin_cidr_ipv6         = "2001:db8::/32"
+gateway_addresses_ipv6  = "::/0"
+```
+
+**VPC-internal IPv6 only** (no public IPv6 — no `ipv6_gateway_id` required):
+
+```hcl
+enable_ipv6             = true
+ipv6_internet_bandwidth = 0
+admin_cidr_ipv6         = "::/0"
+gateway_addresses_ipv6  = "::/0"
+```
+
 ## Variables
 
 | Name | Description | Type | Allowed Values | Default | Required |
@@ -127,6 +165,12 @@ The `gateway_management` variable controls how the Management Server reaches the
 | primary_ntp | Primary NTP server — hostname **or** IPv4 address | string | hostname or IPv4 | `"ntp.cloud.aliyuncs.com"` | no |
 | secondary_ntp | Secondary NTP server — hostname **or** IPv4 address | string | hostname or IPv4 | `"ntp7.cloud.aliyuncs.com"` | no |
 | bootstrap_script | Optional semicolon-separated commands to run on first boot | string | n/a | `""` | no |
+| enable_ipv6 | Enable IPv6 (dual-stack) on the VPC, vSwitch, ENI, and security group rules | bool | true / false | `false` | no |
+| ipv6_gateway_id | Existing IPv6 Gateway ID (`ipv6gw-...`). Required when `enable_ipv6 = true`, using an existing VPC, AND `ipv6_internet_bandwidth > 0` (public IPv6). Not required for internal-only IPv6 (`bandwidth = 0`). Ignored when creating a new VPC | string | n/a | `""` | no |
+| ipv6_internet_bandwidth | IPv6 internet bandwidth in Mbps. Used only when `enable_ipv6 = true`. Set to `0` to skip the IPv6 gateway + bandwidth and keep IPv6 VPC-internal only | number | 0, or 1–2000 (PayByBandwidth) / 1–1000 (PayByTraffic) | `100` | no |
+| ipv6_internet_charge_type | Billing model for the IPv6 internet bandwidth | string | PayByTraffic, PayByBandwidth | `"PayByTraffic"` | no |
+| admin_cidr_ipv6 | IPv6 CIDR allowed to reach admin ports (22, 443, 18190, 19009). Required when `enable_ipv6 = true` | string | valid IPv6 CIDR | `""` | no |
+| gateway_addresses_ipv6 | IPv6 CIDR allowed to reach gateway-facing ports (257, 8211, 18191-18192, 18210-18211, 18221, 18264). Required when `enable_ipv6 = true` | string | valid IPv6 CIDR | `""` | no |
 
 ## Outputs
 
@@ -156,4 +200,7 @@ output "management_public_ip" {
 | management_instance_id | The Management Server ECS instance ID |
 | management_instance_name | The Management Server ECS instance name |
 | management_public_ip | The Elastic IP address of the Management Server (empty if EIP not allocated) |
+| management_sg_id | The ID of the management server security group |
 | vpc_id | The VPC ID (existing or newly created) |
+| management_ipv6_address | The IPv6 address assigned to the Management Server (empty if `enable_ipv6 = false`) |
+| ipv6_gateway_id | The IPv6 Gateway ID — the newly created gateway when new VPC + `bandwidth > 0`, otherwise the value of `var.ipv6_gateway_id` (which may be empty). Empty when `enable_ipv6 = false` |

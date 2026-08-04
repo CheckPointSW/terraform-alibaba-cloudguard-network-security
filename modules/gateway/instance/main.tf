@@ -4,6 +4,7 @@ resource "alicloud_network_interface" "internal_eni" {
   vswitch_id             = var.private_vswitch_id
   security_group_ids     = var.security_groups
   description            = "eth1"
+  ipv6_address_count     = var.enable_ipv6 ? 1 : null
 }
 
 resource "alicloud_instance" "gateway_instance" {
@@ -15,6 +16,7 @@ resource "alicloud_instance" "gateway_instance" {
   security_groups      = var.security_groups
   system_disk_size     = var.volume_size
   system_disk_category = var.disk_category
+  ipv6_address_count   = var.enable_ipv6 ? 1 : null
 
   network_interfaces {
     network_interface_id = alicloud_network_interface.internal_eni.id

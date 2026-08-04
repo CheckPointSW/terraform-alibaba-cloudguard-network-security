@@ -1,38 +1,45 @@
 // --- VPC ---
 resource "alicloud_vpc" "vpc" {
-  cidr_block = var.vpc_cidr
-  vpc_name   = var.vpc_name
+  cidr_block  = var.vpc_cidr
+  vpc_name    = var.vpc_name
+  enable_ipv6 = var.enable_ipv6
 }
 
 // --- Public vSwitches ---
 resource "alicloud_vswitch" "publicVsw" {
   for_each = var.public_vswitchs_map
 
-  vpc_id       = alicloud_vpc.vpc.id
-  zone_id      = each.key
-  cidr_block   = cidrsubnet(alicloud_vpc.vpc.cidr_block, var.vswitchs_bit_length, each.value)
-  vswitch_name = format("Public-vswitch-%s", each.value)
-  tags         = {}
+  vpc_id               = alicloud_vpc.vpc.id
+  zone_id              = each.key
+  cidr_block           = cidrsubnet(alicloud_vpc.vpc.cidr_block, var.vswitchs_bit_length, each.value)
+  vswitch_name         = format("Public-vswitch-%s", each.value)
+  enable_ipv6          = var.enable_ipv6
+  ipv6_cidr_block_mask = var.enable_ipv6 ? each.value : null
+  tags                 = {}
 }
 
 // --- Management vSwitches ---
 resource "alicloud_vswitch" "managementVsw" {
   for_each = var.management_vswitchs_map
 
-  vpc_id       = alicloud_vpc.vpc.id
-  zone_id      = each.key
-  cidr_block   = cidrsubnet(alicloud_vpc.vpc.cidr_block, var.vswitchs_bit_length, each.value)
-  vswitch_name = format("Management-vswitch-%s", each.value)
-  tags         = {}
+  vpc_id               = alicloud_vpc.vpc.id
+  zone_id              = each.key
+  cidr_block           = cidrsubnet(alicloud_vpc.vpc.cidr_block, var.vswitchs_bit_length, each.value)
+  vswitch_name         = format("Management-vswitch-%s", each.value)
+  enable_ipv6          = var.enable_ipv6
+  ipv6_cidr_block_mask = var.enable_ipv6 ? each.value : null
+  tags                 = {}
 }
 
 // --- Private vSwitches ---
 resource "alicloud_vswitch" "privateVsw" {
   for_each = var.private_vswitchs_map
 
-  vpc_id       = alicloud_vpc.vpc.id
-  zone_id      = each.key
-  cidr_block   = cidrsubnet(alicloud_vpc.vpc.cidr_block, var.vswitchs_bit_length, each.value)
-  vswitch_name = format("Private-vswitch-%s", each.value)
-  tags         = {}
+  vpc_id               = alicloud_vpc.vpc.id
+  zone_id              = each.key
+  cidr_block           = cidrsubnet(alicloud_vpc.vpc.cidr_block, var.vswitchs_bit_length, each.value)
+  vswitch_name         = format("Private-vswitch-%s", each.value)
+  enable_ipv6          = var.enable_ipv6
+  ipv6_cidr_block_mask = var.enable_ipv6 ? each.value : null
+  tags                 = {}
 }

@@ -1,20 +1,24 @@
 // --- Validations ---
 module "validate" {
-  source           = "../common/validations"
-  chkp_type        = "gateway"
-  instance_type    = var.gateway_instance_type
-  version_license  = var.gateway_version
-  volume_size      = var.volume_size
-  admin_shell      = var.admin_shell
-  hostname         = var.gateway_hostname
-  sic_key          = var.gateway_SICKey
-  token            = var.gateway_TokenKey
-  password_hash    = var.gateway_password_hash
-  vpc_id           = var.vpc_id
-  vpc_name         = var.vpc_name
-  key_name         = var.key_name
-  ram_role_name    = var.ram_role_name
-  bootstrap_script = var.gateway_bootstrap_script
+  source                    = "../common/validations"
+  chkp_type                 = "gateway"
+  instance_type             = var.gateway_instance_type
+  version_license           = var.gateway_version
+  volume_size               = var.volume_size
+  admin_shell               = var.admin_shell
+  hostname                  = var.gateway_hostname
+  sic_key                   = var.gateway_SICKey
+  token                     = var.gateway_TokenKey
+  password_hash             = var.gateway_password_hash
+  enable_ipv6               = var.enable_ipv6
+  vpc_id                    = var.vpc_id
+  vpc_name                  = var.vpc_name
+  key_name                  = var.key_name
+  ram_role_name             = var.ram_role_name
+  bootstrap_script          = var.gateway_bootstrap_script
+  ipv6_gateway_id           = var.ipv6_gateway_id
+  ipv6_internet_bandwidth   = var.ipv6_internet_bandwidth
+  ipv6_internet_charge_type = var.ipv6_internet_charge_type
 }
 
 // --- VPC (created only when vpc_id is not provided) ---
@@ -27,6 +31,7 @@ module "vpc" {
   public_vswitchs_map  = var.public_vswitchs_map
   private_vswitchs_map = var.private_vswitchs_map
   vswitchs_bit_length  = var.vswitchs_bit_length
+  enable_ipv6          = var.enable_ipv6
 }
 
 // --- Route table (created only when a new VPC is created) ---
@@ -59,6 +64,7 @@ module "permissive_sg" {
   vpc_id             = local.resolved_vpc_id
   resources_tag_name = var.resources_tag_name
   gateway_name       = var.gateway_name
+  enable_ipv6        = var.enable_ipv6
 }
 
 // --- Gateway Instance ---
@@ -86,6 +92,7 @@ module "instance" {
   secondary_ntp            = var.secondary_ntp
   private_vswitch_id       = local.resolved_private_vswitch_id
   eni_name_prefix          = var.resources_tag_name != "" ? var.resources_tag_name : var.gateway_name
+  enable_ipv6              = var.enable_ipv6
 }
 
 // --- Default Route via Internal ENI ---
@@ -95,6 +102,7 @@ module "internal_default_route" {
 
   private_route_table = local.create_vpc ? alicloud_route_table.private_vswitch_rt[0].id : var.private_route_table
   internal_eni_id     = module.instance.internal_eni_id
+  enable_ipv6         = var.enable_ipv6
 }
 
 // --- Elastic IP ---
@@ -111,4 +119,19 @@ resource "alicloud_ram_role_attachment" "attach" {
   count        = var.ram_role_name != "" ? 1 : 0
   role_name    = var.ram_role_name
   instance_ids = [module.instance.gateway_instance_id]
+}
+
+// --- IPv6 Internet (gateway + bandwidth for public IPv6 connectivity) ---
+module "ipv6_internet" {
+  count  = var.enable_ipv6 ? 1 : 0
+  source = "../common/ipv6-internet"
+
+  create_ipv6_gateway       = local.create_vpc
+  vpc_id                    = local.resolved_vpc_id
+  ipv6_gateway_id           = var.ipv6_gateway_id
+  instance_id               = module.instance.gateway_instance_id
+  vswitch_id                = local.resolved_public_vswitch_id
+  ipv6_internet_bandwidth   = var.ipv6_internet_bandwidth
+  ipv6_internet_charge_type = var.ipv6_internet_charge_type
+  ipv6_gateway_name         = format("%s-ipv6-gw", var.resources_tag_name != "" ? var.resources_tag_name : var.gateway_name)
 }

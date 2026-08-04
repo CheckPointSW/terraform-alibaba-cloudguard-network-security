@@ -129,3 +129,21 @@ variable "allocate_and_associate_eip" {
   description = "Passed to userdata so the management server knows whether it has a public IP"
   default     = true
 }
+
+variable "enable_ipv6" {
+  type        = bool
+  description = "Enable IPv6 (dual-stack) on the management instance and security group."
+  default     = false
+}
+
+variable "admin_cidr_ipv6" {
+  type        = string
+  description = "IPv6 CIDR to allow admin access to the management server. Used only when enable_ipv6 = true; root module enforces non-empty via validation."
+  default     = ""
+}
+
+variable "gateway_addresses_ipv6" {
+  type        = string
+  description = "IPv6 CIDR to allow gateway communication with the management server. Used only when enable_ipv6 = true; root module enforces non-empty via validation."
+  default     = ""
+}
