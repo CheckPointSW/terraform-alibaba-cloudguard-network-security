@@ -18,7 +18,22 @@ output "management_public_ip" {
   value       = module.elastic_ip.instance_eip_public_ip
 }
 
+output "management_sg_id" {
+  description = "The ID of the management server security group"
+  value       = module.instance.management_sg_id
+}
+
 output "vpc_id" {
   description = "The VPC ID (existing or newly created)"
   value       = local.resolved_vpc_id
+}
+
+output "management_ipv6_address" {
+  description = "The IPv6 address of the management instance (empty if IPv4 only)"
+  value       = var.enable_ipv6 ? module.instance.management_ipv6_address : ""
+}
+
+output "ipv6_gateway_id" {
+  description = "The IPv6 gateway ID (empty if IPv4 only)"
+  value       = var.enable_ipv6 ? module.ipv6_internet[0].ipv6_gateway_id : ""
 }

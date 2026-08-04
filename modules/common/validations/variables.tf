@@ -52,6 +52,12 @@ variable "password_hash" {
   sensitive   = true
 }
 
+variable "enable_ipv6" {
+  type        = bool
+  description = "Whether IPv6 (dual-stack) is enabled — used for existing-VPC validation."
+  default     = false
+}
+
 variable "vpc_id" {
   type        = string
   description = "(Optional) VPC ID to validate — checked for whitespace and the vpc_id/vpc_name pairing."
@@ -85,5 +91,40 @@ variable "ram_role_name" {
 variable "bootstrap_script" {
   type        = string
   description = "(Optional) Bootstrap script to validate — empty allowed, blank (whitespace-only) rejected"
+  default     = ""
+}
+
+variable "ipv6_gateway_id" {
+  type        = string
+  description = "(Optional) Existing IPv6 gateway ID — required when dual-stack + existing VPC."
+  default     = ""
+}
+
+variable "ipv6_internet_bandwidth" {
+  type        = number
+  description = "(Optional) IPv6 internet bandwidth in Mbps — validated when enable_ipv6 is true. 0 = VPC-internal IPv6 only (no public IPv6)."
+  default     = 100
+}
+
+variable "ipv6_internet_charge_type" {
+  type        = string
+  description = "(Optional) IPv6 internet billing model. Allowed: PayByBandwidth, PayByTraffic. Also bounds the accepted ipv6_internet_bandwidth range."
+  default     = "PayByTraffic"
+
+  validation {
+    condition     = contains(["PayByBandwidth", "PayByTraffic"], var.ipv6_internet_charge_type)
+    error_message = "ipv6_internet_charge_type must be one of: PayByBandwidth, PayByTraffic."
+  }
+}
+
+variable "admin_cidr_ipv6" {
+  type        = string
+  description = "(Optional) Management admin IPv6 CIDR — required and format-checked when enable_ipv6 is true and chkp_type is management."
+  default     = ""
+}
+
+variable "gateway_addresses_ipv6" {
+  type        = string
+  description = "(Optional) Management gateway-source IPv6 CIDR — required and format-checked when enable_ipv6 is true and chkp_type is management."
   default     = ""
 }

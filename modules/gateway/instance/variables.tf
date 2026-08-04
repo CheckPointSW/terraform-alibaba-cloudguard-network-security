@@ -116,3 +116,9 @@ variable "eni_name_prefix" {
   type        = string
   description = "Name prefix for the internal ENI resource"
 }
+
+variable "enable_ipv6" {
+  type        = bool
+  description = "Enable IPv6 (dual-stack) on the gateway instance and internal ENI."
+  default     = false
+}

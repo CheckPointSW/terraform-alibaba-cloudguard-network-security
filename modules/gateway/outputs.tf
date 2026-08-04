@@ -27,3 +27,18 @@ output "vpc_id" {
   description = "The VPC ID (existing or newly created)"
   value       = local.resolved_vpc_id
 }
+
+output "gateway_ipv6_address" {
+  description = "The IPv6 address of the gateway instance (empty if IPv4 only)"
+  value       = var.enable_ipv6 ? module.instance.gateway_ipv6_address : ""
+}
+
+output "internal_eni_ipv6_address" {
+  description = "The IPv6 address of the internal ENI (empty if IPv4 only)"
+  value       = var.enable_ipv6 ? module.instance.internal_eni_ipv6_address : ""
+}
+
+output "ipv6_gateway_id" {
+  description = "The IPv6 gateway ID (empty if IPv4 only)"
+  value       = var.enable_ipv6 ? module.ipv6_internet[0].ipv6_gateway_id : ""
+}

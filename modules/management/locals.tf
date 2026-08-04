@@ -10,8 +10,8 @@ locals {
   ))
 
   // Resolve VPC and vSwitch IDs from whichever mode is configured
-  resolved_vpc_id    = local.create_vpc ? module.vpc[0].vpc_id : var.vpc_id
-  resolved_vswitch   = local.create_vpc ? module.vpc[0].public_vswitchs_ids_list[0] : var.vswitch_id
+  resolved_vpc_id  = local.create_vpc ? module.vpc[0].vpc_id : var.vpc_id
+  resolved_vswitch = local.create_vpc ? module.vpc[0].public_vswitchs_ids_list[0] : var.vswitch_id
 
   // --- Management-specific validations ---
   gateway_management_allowed_values = [

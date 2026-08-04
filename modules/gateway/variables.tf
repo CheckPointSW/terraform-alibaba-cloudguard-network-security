@@ -172,3 +172,28 @@ variable "secondary_ntp" {
   description = "(Optional) Secondary NTP server IPv4 address"
   default     = "ntp7.cloud.aliyuncs.com"
 }
+
+// ─── IPv6 / Dual-Stack ──────────────────────────────────────────────────────
+variable "enable_ipv6" {
+  type        = bool
+  description = "Enable IPv6 (dual-stack) for the gateway deployment."
+  default     = false
+}
+
+variable "ipv6_gateway_id" {
+  type        = string
+  description = "(Optional) Existing IPv6 gateway ID. Required when enable_ipv6 = true, deploying into an existing VPC, AND ipv6_internet_bandwidth > 0. Not required for internal-only IPv6 (bandwidth = 0)."
+  default     = ""
+}
+
+variable "ipv6_internet_bandwidth" {
+  type        = number
+  description = "IPv6 internet bandwidth in Mbps (0-5000). Only used when enable_ipv6 = true. Set to 0 to skip the IPv6 gateway + bandwidth and keep IPv6 VPC-internal only (no public IPv6)."
+  default     = 100
+}
+
+variable "ipv6_internet_charge_type" {
+  type        = string
+  description = "Billing model for the IPv6 internet bandwidth. PayByTraffic = pay per GB transferred; PayByBandwidth = flat fee per reserved Mbps. Only used when enable_ipv6 = true and ipv6_internet_bandwidth > 0."
+  default     = "PayByTraffic"
+}

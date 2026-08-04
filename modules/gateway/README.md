@@ -101,6 +101,36 @@ This module deploys the gateway with two network interfaces:
 allocate_and_associate_eip = true
 ```
 
+## IPv6 / Dual-Stack
+
+Set `enable_ipv6 = true` to deploy the gateway with dual-stack (IPv4 + IPv6) on both eth0 and eth1.
+
+- **New VPC** — the module enables IPv6 on the VPC and vSwitches, and creates the IPv6 Gateway automatically. No extra setup needed.
+- **Existing VPC** — the VPC and vSwitches must already have IPv6 enabled. If you want public IPv6 (`ipv6_internet_bandwidth > 0`), you must also pass `ipv6_gateway_id` of an existing IPv6 Gateway on that VPC; plan fails otherwise. For internal-only IPv6 (`bandwidth = 0`), `ipv6_gateway_id` is not required.
+- **No public IPv6** — set `ipv6_internet_bandwidth = 0` to skip the IPv6 internet bandwidth allocation. The instance still gets an IPv6 address from the vSwitch, but is reachable only within the VPC.
+
+**New VPC + public IPv6** (default):
+
+```hcl
+enable_ipv6             = true
+ipv6_internet_bandwidth = 100
+```
+
+**Existing VPC + public IPv6** (supply your existing IPv6 Gateway):
+
+```hcl
+enable_ipv6             = true
+ipv6_internet_bandwidth = 100
+ipv6_gateway_id         = "ipv6gw-xxxxxxxxxxxx"
+```
+
+**VPC-internal IPv6 only** (no public IPv6 — no `ipv6_gateway_id` required):
+
+```hcl
+enable_ipv6             = true
+ipv6_internet_bandwidth = 0
+```
+
 ## Variables
 
 | Name | Description | Type | Allowed Values | Default | Required |
@@ -133,6 +163,10 @@ allocate_and_associate_eip = true
 | gateway_bootstrap_script | Optional semicolon-separated commands to run on first boot | string | n/a | `""` | no |
 | primary_ntp | IPv4 address of the primary NTP server | string | n/a | `"ntp.cloud.aliyuncs.com"` | no |
 | secondary_ntp | IPv4 address of the secondary NTP server | string | n/a | `"ntp7.cloud.aliyuncs.com"` | no |
+| enable_ipv6 | Enable IPv6 (dual-stack) on the VPC, vSwitches, ENIs, security group, and routes | bool | true / false | `false` | no |
+| ipv6_gateway_id | Existing IPv6 Gateway ID (`ipv6gw-...`). Required when `enable_ipv6 = true`, using an existing VPC, AND `ipv6_internet_bandwidth > 0` (public IPv6). Not required for internal-only IPv6 (`bandwidth = 0`). Ignored when creating a new VPC | string | n/a | `""` | no |
+| ipv6_internet_bandwidth | IPv6 internet bandwidth in Mbps. Used only when `enable_ipv6 = true`. Set to `0` to skip the IPv6 gateway + bandwidth and keep IPv6 VPC-internal only | number | 0, or 1–2000 (PayByBandwidth) / 1–1000 (PayByTraffic) | `100` | no |
+| ipv6_internet_charge_type | Billing model for the IPv6 internet bandwidth | string | PayByTraffic, PayByBandwidth | `"PayByTraffic"` | no |
 
 ## Outputs
 
@@ -164,3 +198,6 @@ output "gateway_public_ip" {
 | internal_eni_id | The ID of the gateway's internal (eth1) ENI |
 | permissive_sg_id | The permissive security group ID |
 | vpc_id | The VPC ID (existing or newly created) |
+| gateway_ipv6_address | The IPv6 address assigned to the gateway's eth0 (empty if `enable_ipv6 = false`) |
+| internal_eni_ipv6_address | The IPv6 address assigned to the gateway's eth1 (empty if `enable_ipv6 = false`) |
+| ipv6_gateway_id | The IPv6 Gateway ID — the newly created gateway when new VPC + `bandwidth > 0`, otherwise the value of `var.ipv6_gateway_id` (which may be empty). Empty when `enable_ipv6 = false` |
