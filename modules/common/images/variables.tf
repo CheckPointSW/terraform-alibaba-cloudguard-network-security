@@ -7,5 +7,5 @@ variable "chkp_type" {
 variable "version_license" {
   type        = string
   description = "Version and license"
-  default     = "R82-BYOL"
+  default     = "R82.10-BYOL"
 }

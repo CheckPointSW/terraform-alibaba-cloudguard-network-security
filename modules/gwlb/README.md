@@ -124,7 +124,7 @@ module "cloudguard_gwlb" {
 
   # --- Check Point NVA ---
   gateway_instance_type = "ecs.g5ne.xlarge"
-  gateway_version       = "R82-BYOL"
+  gateway_version       = "R82.10-BYOL"
   gateway_SICKey           = "mySICkey123"
   gateway_password_hash    = ""
   gateway_bootstrap_script = ""
@@ -259,7 +259,7 @@ Return traffic from the GWLBe out to the internet via the IPv4 gateway.
 | vswitchs_bit_length | Bits to extend `security_vpc_cidr` per vSwitch (e.g. /16 + 8 = /24) | number | — | `8` | no |
 | key_name | SSH key pair name for instance access | string | — | — | yes |
 | gateway_instance_type | ECS instance type (g5ne or g7ne family) | string | `ecs.g5ne.large`, `ecs.g5ne.xlarge`, `ecs.g5ne.2xlarge`, `ecs.g5ne.4xlarge`, `ecs.g5ne.8xlarge`, `ecs.g7ne.large`, `ecs.g7ne.xlarge`, `ecs.g7ne.2xlarge`, `ecs.g7ne.4xlarge`, `ecs.g7ne.8xlarge` | `"ecs.g5ne.xlarge"` | no |
-| gateway_version | Check Point version and license | string | `R81.20-BYOL`, `R82-BYOL`, `R82.10-BYOL` | `"R82-BYOL"` | no |
+| gateway_version | Check Point version and license | string | `R81.20-BYOL`, `R82-BYOL`, `R82.10-BYOL` | `"R82.10-BYOL"` | no |
 | gateway_SICKey | Secure Internal Communication key | string | ≥ 8 alphanumeric chars | — | yes |
 | gateway_password_hash | Admin password hash. Generate with: `openssl passwd -6 PASSWORD` | string | — | `""` | no |
 | admin_shell | Admin shell | string | `/etc/cli.sh`, `/bin/bash`, `/bin/csh`, `/bin/tcsh` | `"/etc/cli.sh"` | no |

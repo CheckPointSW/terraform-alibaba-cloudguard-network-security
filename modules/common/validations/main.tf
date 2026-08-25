@@ -40,13 +40,11 @@ resource "null_resource" "invalid_instance_type" {
 // --- Version/license validation ---
 locals {
   gw_versions = [
-    "R81.10-BYOL",
     "R81.20-BYOL",
     "R82-BYOL",
     "R82.10-BYOL"
   ]
   mgmt_versions = [
-    "R81.10-BYOL",
     "R81.20-BYOL",
     "R82-BYOL",
     "R82.10-BYOL"
