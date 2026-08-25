@@ -95,7 +95,7 @@ variable "disk_category" {
 variable "gateway_version" {
   type        = string
   description = "Check Point gateway version and license (e.g. R82.20-BYOL)"
-  default     = "R82-BYOL"
+  default     = "R82.10-BYOL"
 
   validation {
     condition = contains([
