@@ -88,7 +88,7 @@ variable "instance_tags" {
 variable "version_license" {
   type        = string
   description = "Management server version and license"
-  default     = "R82-BYOL"
+  default     = "R82.10-BYOL"
 }
 
 variable "admin_shell" {
