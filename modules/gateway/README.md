@@ -152,7 +152,7 @@ ipv6_internet_bandwidth = 0
 | disk_category | ECS disk category | string | cloud, cloud_efficiency, cloud_ssd, cloud_essd | `"cloud_efficiency"` | no |
 | ram_role_name | Predefined RAM role name to attach to the gateway instance | string | n/a | `""` | no |
 | instance_tags | Map of tags to apply to the gateway ECS instance | map(string) | n/a | `{}` | no |
-| gateway_version | Gateway version and license | string | R81.20-BYOL, R82-BYOL, R82.10-BYOL | `"R82.10-BYOL"` | no |
+| gateway_version | Gateway version and license | string | R81.20-BYOL, R82-BYOL, R82.10-BYOL, R82.20-BYOL | `"R82.10-BYOL"` | no |
 | admin_shell | Admin shell for advanced CLI configuration | string | /etc/cli.sh, /bin/bash, /bin/csh, /bin/tcsh | `"/etc/cli.sh"` | no |
 | gateway_SICKey | Secure Internal Communication (SIC) key | string | ≥ 8 alphanumeric chars | n/a | yes |
 | gateway_password_hash | Admin user password hash. Generate with: `openssl passwd -6 PASSWORD` | string | n/a | `""` | no |

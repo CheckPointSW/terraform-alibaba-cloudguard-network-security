@@ -100,7 +100,7 @@ variable "gateway_version" {
   validation {
     condition = contains([
       "R81.20-BYOL",
-      "R82-BYOL", "R82.10-BYOL",
+      "R82-BYOL", "R82.10-BYOL", "R82.20-BYOL",
     ], var.gateway_version)
     error_message = "gateway_version must be R81.20-BYOL or newer. R81 and R81.10 are not supported for GWLB."
   }
