@@ -42,12 +42,14 @@ locals {
   gw_versions = [
     "R81.20-BYOL",
     "R82-BYOL",
-    "R82.10-BYOL"
+    "R82.10-BYOL",
+    "R82.20-BYOL"
   ]
   mgmt_versions = [
     "R81.20-BYOL",
     "R82-BYOL",
-    "R82.10-BYOL"
+    "R82.10-BYOL",
+    "R82.20-BYOL"
   ]
   allowed_versions = coalescelist(
     var.chkp_type == "gateway" ? local.gw_versions : [],

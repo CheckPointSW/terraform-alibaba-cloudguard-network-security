@@ -11,7 +11,8 @@ Parameters:
       - R82-BYOL-MGMT
       - R82.10-BYOL-GW
       - R82.10-BYOL-MGMT
-
+      - R82.20-BYOL-GW
+      - R82.20-BYOL-MGMT
 Mappings:
   ConverterMap:
     R81.20-BYOL-GW:
@@ -26,7 +27,10 @@ Mappings:
       Value: R8210BYOLGW
     R82.10-BYOL-MGMT:
       Value: R8210BYOLMGMT
-
+    R82.20-BYOL-GW:
+      Value: R8220BYOLGW
+    R82.20-BYOL-MGMT:
+      Value: R8220BYOLMGMT
   RegionMap:
     cn-hongkong:
       R8120BYOLMGMT: m-j6c2uokaxkr9az5t18un
